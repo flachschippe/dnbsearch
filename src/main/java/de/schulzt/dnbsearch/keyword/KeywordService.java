@@ -1,5 +1,7 @@
 package de.schulzt.dnbsearch.keyword;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
@@ -28,12 +30,21 @@ public class KeywordService {
 		KeywordGraph graph = new KeywordGraph();
 		
 		for(Book book : books) {
-			for(Keyword keyword: book.getKeywords()) {
-				for(Keyword keyword1 : book.getKeywords()) {
-					if(keyword != keyword1) {
-						graph.addLink(keyword.getTitle(), keyword1.getTitle());
-					}
+			List<Keyword> keywords = book.getKeywords();
+			int size = keywords.size();
+			if(size == 1) {
+				graph.addNode(keywords.get(0).getTitle());
+			} else if(size > 1){		
+				for(int i = 0; i < size; i++) {
+					for(int j = i + 1; j < size - 1; j++) {
+						Keyword keyword1 = keywords.get(i);
+						Keyword keyword2 = keywords.get(j);
+						graph.addLink(keyword1.getTitle(), keyword2.getTitle());
+					}		
 				}
+				Keyword keyword1 = keywords.get(0);
+				Keyword keyword2 = keywords.get(keywords.size() - 1);
+				graph.addLink(keyword1.getTitle(), keyword2.getTitle());				
 			}
 		}
 		return graph;

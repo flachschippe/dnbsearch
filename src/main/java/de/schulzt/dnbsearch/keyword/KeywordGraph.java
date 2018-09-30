@@ -42,6 +42,12 @@ public class KeywordGraph {
 	}
 	
 	public void addLink(final String source, final String target) {
+		
+		if(source == target ||
+				source.startsWith("_:node") ||
+				target.startsWith("_:node"))
+			return;
+		
 		KeywordNode s = this.addNode(source);
 		KeywordNode t= this.addNode(target);
 
